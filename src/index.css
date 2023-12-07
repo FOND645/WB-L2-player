@@ -2,6 +2,11 @@ body {
     display: flex;
     flex-direction: row;
     gap: 20px;
+    flex-wrap: wrap;
+}
+
+p {
+    margin: 0;
 }
 
 .player-container {
@@ -19,6 +24,7 @@ body {
 }
 
 .player-button {
+    cursor: pointer;
     width: 50px;
     height: 50px;
 }
@@ -28,4 +34,52 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    width: 15rem;
+    flex-grow: 1;
+    height: 40rem;
+    background-color: PowderBlue;
+    border-radius: 8px;
+    overflow-y: scroll;
+}
+
+
+#change-visual {
+    position: absolute;
+    left: 30px;
+    top: 10px;
+}
+
+.listItem {
+    margin: 0;
+    padding: 2px 6px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+}
+
+.playlist-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 0px 0px 6px 0px;
+    padding:  6px 0px 6px 0px;
+    border-bottom: solid 1px black;
+}
+
+.playlist-button-contianer {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+}
+
+.playlist-button {
+    cursor: pointer;    
+}
+
+.lists {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
 }

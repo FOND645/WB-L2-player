@@ -1,33 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <script type="module" src="node_modules/wavesurfer.js/dist/wavesurfer.js"></script>
-        <script type="module" src="src/js/index.js"></script>
-        <link rel="stylesheet" href="src/index.css" />
-        <title>Document</title>
-    </head>
 
-    <body>
-        <div class="player-container">
-            <canvas id="canvas-visual" width="512" height="256"></canvas>
-            <div class="player-line" id="player-line"></div>
-            <div class="player-control">
-                <img src="src/svg/prev-track.svg" alt="" class="player-button" id="prev-track" />
-                <img src="src/svg/pause.svg" alt="" class="player-button" id="pause" />
-                <img src="src/svg/play.svg" alt="" class="player-button" id="play" />
-                <img src="src/svg/next-track.svg" alt="" class="player-button" id="next-track" />
-                <img src="src/svg/volumeON.svg" alt="" class="player-button" id="volumeON" />
-                <img src="src/svg/volumeOFF.svg" alt="" class="player-button" id="volumeOFF" />
-                <input type="range" name="volume" id="volume-input" min="0" max="100" value="100" />
-            </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="module" src="node_modules/wavesurfer.js/dist/wavesurfer.js"></script>
+    <script type="module" src="src/js/index.js"></script>
+    <link rel="stylesheet" href="src/index.css" />
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="player-container">
+        <canvas id="canvas-visual" width="512" height="256"></canvas>
+        <div class="player-line" id="player-line"></div>
+        <div class="player-control">
+            <img src="src/svg/prev-track.svg" alt="" class="player-button" id="prev-track" />
+            <img src="src/svg/pause.svg" alt="" class="player-button" id="pause" />
+            <img src="src/svg/play.svg" alt="" class="player-button" id="play" />
+            <img src="src/svg/next-track.svg" alt="" class="player-button" id="next-track" />
+            <img src="src/svg/volumeON.svg" alt="" class="player-button" id="volumeON" />
+            <img src="src/svg/volumeOFF.svg" alt="" class="player-button" id="volumeOFF" />
+            <input type="range" name="volume" id="volume-input" min="0" max="100" value="100" />
         </div>
-        <div class="settings">
-            <p>Сменить тип визуализации</p>
-        </div>
+    </div>
+    <div class="settings">
+        <img src="src/svg/change-visual.svg" alt="" class="player-button" id="change-visual">
+    </div>
+    <div class="lists">
+
         <div class="local-list" id="local-list"></div>
         <div class="remote-list" id="remote-list"></div>
-        <div class="empty" id="empty"></div>
-    </body>
+    </div>
+    <canvas height="0" width="0" class="empty" id="empty"></canvas>
+</body>
+
 </html>
