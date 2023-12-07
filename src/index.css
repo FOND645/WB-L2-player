@@ -42,7 +42,6 @@ p {
     overflow-y: scroll;
 }
 
-
 #change-visual {
     position: absolute;
     left: 30px;
@@ -64,7 +63,7 @@ p {
     align-items: center;
     justify-content: center;
     margin: 0px 0px 6px 0px;
-    padding:  6px 0px 6px 0px;
+    padding: 6px 0px 6px 0px;
     border-bottom: solid 1px black;
 }
 
@@ -75,11 +74,30 @@ p {
 }
 
 .playlist-button {
-    cursor: pointer;    
+    cursor: pointer;
 }
 
 .lists {
     display: flex;
     flex-direction: row;
     flex-grow: 1;
+}
+
+#upload-file::before {
+    content: "Загрузить трек ";
+}
+
+#upload-file {
+    align-self: flex-end;
+}
+
+.player-little-button {
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+}
+
+#random,
+#cicle {
+    fill: #c0c0c0;
 }

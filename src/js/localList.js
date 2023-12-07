@@ -1,69 +1,72 @@
 export class localPlaylist {
     constructor(Player) {
-        this.playlistContainer = document.getElementById('local-list')
-        this.selectedSongInd = -1
-        this.playingIndex = 0
-        this.Player = Player
-        this.renderPlayList()
+        this.playlistContainer = document.getElementById("local-list");
+        this.selectedSongInd = -1;
+        this.playingIndex = 0;
+        this.Player = Player;
+        this.renderPlayList();
         if (this.getLocalList().length !== 0) {
-            this.Player.player.load(this.getAudioURL(this.getLocalList()[0].fileName))
+            this.Player.player.load(this.getAudioURL(this.getLocalList()[0].fileName));
         } else {
-            this.playingIndex = -1
+            this.playingIndex = -1;
         }
     }
 
     renderPlayList() {
-        const playlist = this.getLocalList()
-        this.playlistContainer.innerHTML = ''
-        const title = document.createElement('p')
-        title.innerText = 'Локальный плейлист'
-        title.classList.add('playlist-title')
-        this.playlistContainer.appendChild(title)
+        const playlist = this.getLocalList();
+        this.playlistContainer.innerHTML = "";
+        const title = document.createElement("p");
+        title.innerText = "Локальный плейлист";
+        title.classList.add("playlist-title");
+        title.style.position = "sticky";
+        this.playlistContainer.appendChild(title);
         playlist.forEach((Track, ind) => {
-            console.log()
-            const row = document.createElement('div')
-            row.classList.add('listItem')
+            const row = document.createElement("div");
+            row.classList.add("listItem");
             if (ind === this.selectedSongInd) {
-                row.style.backgroundColor = 'LightSkyBlue'
+                row.style.backgroundColor = "LightSkyBlue";
             }
             if (ind === this.playingIndex) {
-                row.style.backgroundColor = 'DodgerBlue'
+                row.style.backgroundColor = "DodgerBlue";
             }
-            row.addEventListener('click', () => {
-                this.selectedSongInd = ind
-                this.renderPlayList()
-            })
-            this.playlistContainer.append(row)
+            row.addEventListener("click", () => {
+                this.selectedSongInd = ind;
+                this.renderPlayList();
+            });
+            this.playlistContainer.append(row);
 
-            const buttonContainer = document.createElement('div')
-            buttonContainer.classList.add('playlist-button-contianer')
-            row.appendChild(buttonContainer)
+            const buttonContainer = document.createElement("div");
+            buttonContainer.classList.add("playlist-button-contianer");
+            row.appendChild(buttonContainer);
 
-            const deleteButton = document.createElement('p')
-            deleteButton.innerText = '🗑'
-            deleteButton.addEventListener('click', () => {
-                this.removeFromLocalList(ind)
-                this.renderPlayList()
-            })
-            deleteButton.classList.add('playlist-button')
-            buttonContainer.appendChild(deleteButton)
+            const deleteButton = document.createElement("p");
+            deleteButton.innerText = "🗑";
+            deleteButton.addEventListener("click", () => {
+                this.removeFromLocalList(ind);
+                this.renderPlayList();
+            });
+            deleteButton.classList.add("playlist-button");
+            buttonContainer.appendChild(deleteButton);
 
-            const playButton = document.createElement('p')
-            playButton.innerText = '▷'
-            playButton.addEventListener('click', () => {
-                const url = this.getAudioURL(Track.fileName)
-                this.Player.player.load(url)
-                this.playingIndex = ind
-                this.renderPlayList()
-            })
-            playButton.classList.add('playlist-button')
+            const playButton = document.createElement("p");
+            playButton.innerText = "▷";
+            playButton.addEventListener("click", () => {
+                const url = this.getAudioURL(Track.fileName);
+                this.playingIndex = ind;
+                this.renderPlayList();
+                this.Player.player.load(url).then((_) => {
+                    this.Player.player.play();
+                });
+            });
+            playButton.classList.add("playlist-button");
 
-            const textElement = document.createElement('p')
-            textElement.innerText = Track.fileName
-            row.appendChild(textElement)
+            const textElement = document.createElement("p");
+            textElement.innerText = Track.fileName;
+            textElement.style.wordBreak = "break-all";
+            row.appendChild(textElement);
 
-            buttonContainer.appendChild(playButton)
-        })
+            buttonContainer.appendChild(playButton);
+        });
     }
 
     getAudioURL(trackName) {
@@ -101,7 +104,7 @@ export class localPlaylist {
             if (List.includes(trackName)) {
                 localList.push({ fileName: trackName });
                 localStorage.setItem("playlist", JSON.stringify(localList));
-                this.renderPlayList()
+                this.renderPlayList();
             } else {
                 throw new Error("Такого трека нет на удаленном сервере");
             }
@@ -119,6 +122,6 @@ export class localPlaylist {
         })();
         localList = localList.filter((Item, ind) => ind !== index);
         localStorage.setItem("playlist", JSON.stringify(localList));
-        this.renderPlayList()
+        this.renderPlayList();
     }
 }
