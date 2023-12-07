@@ -2,9 +2,10 @@ export class localPlaylist {
     constructor(Player) {
         this.playlistContainer = document.getElementById('local-list')
         this.selectedSongInd = -1
-        this.playingIndex = -1
+        this.playingIndex = 0
         this.Player = Player
         this.renderPlayList()
+        this.Player.player.load(this.getAudioURL(this.getLocalList()[0].fileName))
     }
 
     renderPlayList() {
@@ -20,6 +21,9 @@ export class localPlaylist {
             row.classList.add('listItem')
             if (ind === this.selectedSongInd) {
                 row.style.backgroundColor = 'LightSkyBlue'
+            }
+            if (ind === this.playingIndex) {
+                row.style.backgroundColor = 'DodgerBlue'
             }
             row.addEventListener('click', () => {
                 this.selectedSongInd = ind
@@ -43,9 +47,10 @@ export class localPlaylist {
             const playButton = document.createElement('p')
             playButton.innerText = '▷'
             playButton.addEventListener('click', () => {
-                // this.Player.playerParams.url = 
-                // console.log(this.Player.player.setOptions)
-                this.Player.player.setOptions({url: this.getAudioURL(Track.fileName)})
+                const url = this.getAudioURL(Track.fileName)
+                this.Player.player.load(url)
+                this.playingIndex = ind
+                this.renderPlayList()
             })
             playButton.classList.add('playlist-button')
 

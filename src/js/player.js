@@ -1,18 +1,16 @@
 import WaveSurfer from "../../node_modules/wavesurfer.js/dist/wavesurfer.js";
 import Spectrogram from "../../node_modules/wavesurfer.js/dist/plugins/spectrogram.js";
-import {localPlaylist} from './localList.js'
-import {remoteList} from './remoteList.js'
+import { localPlaylist } from './localList.js'
+import { remoteList } from './remoteList.js'
 
 export class PlayerClient {
     constructor() {
         this.playerContainerElement = document.getElementById("player-line");
 
-        this.prevTrackButton = document.getElementById("prev-track");
-        this.nextTrackButton = document.getElementById("next-track");
 
         this.changeVisualButton = document.getElementById('change-visual')
         this.changeVisualButton.addEventListener('click', this.changeVisual.bind(this))
-        
+
         this.playButton = document.getElementById("play");
         this.pauseButton = document.getElementById("pause");
         this.pauseButton.style.display = "none";
@@ -29,7 +27,12 @@ export class PlayerClient {
             this.player.setVolume(+val / 100);
         });
 
-        this.canvas = document.querySelector("canvas");
+        this.SpectrogramExemp = Spectrogram.create({
+            container: document.getElementById("empty"),
+            fftSamples: 32,
+        }),
+
+            this.canvas = document.querySelector("canvas");
         this.ctx = this.canvas.getContext("2d");
 
         this.spectr = undefined;
@@ -37,13 +40,6 @@ export class PlayerClient {
             container: this.playerContainerElement,
             waveColor: "rgb(200, 0, 200)",
             progressColor: "rgb(100, 0, 100)",
-            url: this.getAudioURL('Stuart Chatwood - Welcome Within.mp3'),
-            plugins: [
-                Spectrogram.create({
-                    container: document.getElementById("empty"),
-                    fftSamples: 32,
-                }),
-            ],
         }
 
         this.drawInterval;
@@ -58,8 +54,36 @@ export class PlayerClient {
             this.drawInterval = setInterval(() => this.drawVisual(), Math.trunc(50));
         });
 
+        this.player.addEventListener('pause', () => {            
+            this.playButton.style.display = 'flex'
+            this.pauseButton.style.display = 'none'
+        })
+        
+        this.player.addEventListener('play', () => {
+            this.pauseButton.style.display = 'flex'
+            this.playButton.style.display = 'none'
+        })
+
         this.remoteList = new remoteList(this)
         this.localList = new localPlaylist(this)
+
+        
+        this.prevTrackButton = document.getElementById("prev-track");
+        this.prevTrackButton.addEventListener('click', () => {
+            const playIndex = (this.localList.playingIndex - 1) % this.localList.getLocalList().length
+            this.localList.playingIndex = playIndex === -1 ? this.localList.getLocalList().length - 1 : playIndex
+            this.localList.renderPlayList()
+            const Track = this.localList.getLocalList()[this.localList.playingIndex]
+            this.player.load(this.getAudioURL(Track.fileName))            
+        })
+        this.nextTrackButton = document.getElementById("next-track");
+        this.nextTrackButton.addEventListener('click', () => {
+            const playIndex = (this.localList.playingIndex + 1) % this.localList.getLocalList().length
+            this.localList.playingIndex = playIndex === -1 ? this.localList.getLocalList().length - 1 : playIndex
+            this.localList.renderPlayList()
+            const Track = this.localList.getLocalList()[this.localList.playingIndex]
+            this.player.load(this.getAudioURL(Track.fileName))            
+        })
     }
 
     changeVisual() {
@@ -84,12 +108,8 @@ export class PlayerClient {
         const isPlaying = this.player.isPlaying()
         if (isPlaying) {
             this.player.pause()
-            this.playButton.style.display = 'flex'
-            this.pauseButton.style.display = 'none'
         } else {
             this.player.play()
-            this.pauseButton.style.display = 'flex'
-            this.playButton.style.display = 'none'
         }
     }
 
@@ -98,10 +118,10 @@ export class PlayerClient {
     }
 
     updateFrequencies() {
-        this.spectr = this.player.getActivePlugins()[0].getFrequencies(this.player.getDecodedData())[0];
+        this.spectr = this.SpectrogramExemp.getFrequencies(this.player.getDecodedData())[0];
     }
 
-    getPlayerInstance(trackName) {
+    getPlayerInstance() {
         const Player = WaveSurfer.create(this.playerParams);
         Player.addEventListener("decode", this.updateFrequencies.bind(this));
         return Player;
