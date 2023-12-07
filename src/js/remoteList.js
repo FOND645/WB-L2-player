@@ -37,15 +37,13 @@ export class remoteList {
             textElement.innerText = TrackName
             row.appendChild(textElement)
         })
-
-
     }
 
     getRemoteList() {
         return new Promise((res, rej) => {
             fetch("/audioList")
                 .then((data) => data.json())
-                .then((List) => res(List))
+                .then((List) => res([...List]))
                 .catch((Err) => rej(Err));
         });
     }
