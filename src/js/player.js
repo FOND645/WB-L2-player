@@ -54,11 +54,11 @@ export class PlayerClient {
             this.drawInterval = setInterval(() => this.drawVisual(), Math.trunc(50));
         });
 
-        this.player.addEventListener('pause', () => {            
+        this.player.addEventListener('pause', () => {
             this.playButton.style.display = 'flex'
             this.pauseButton.style.display = 'none'
         })
-        
+
         this.player.addEventListener('play', () => {
             this.pauseButton.style.display = 'flex'
             this.playButton.style.display = 'none'
@@ -67,22 +67,53 @@ export class PlayerClient {
         this.remoteList = new remoteList(this)
         this.localList = new localPlaylist(this)
 
-        
         this.prevTrackButton = document.getElementById("prev-track");
-        this.prevTrackButton.addEventListener('click', () => {
-            const playIndex = (this.localList.playingIndex - 1) % this.localList.getLocalList().length
-            this.localList.playingIndex = playIndex === -1 ? this.localList.getLocalList().length - 1 : playIndex
-            this.localList.renderPlayList()
-            const Track = this.localList.getLocalList()[this.localList.playingIndex]
-            this.player.load(this.getAudioURL(Track.fileName))            
-        })
+        this.prevTrackButton.addEventListener('click', this.playPrev.bind(this))
         this.nextTrackButton = document.getElementById("next-track");
-        this.nextTrackButton.addEventListener('click', () => {
-            const playIndex = (this.localList.playingIndex + 1) % this.localList.getLocalList().length
-            this.localList.playingIndex = playIndex === -1 ? this.localList.getLocalList().length - 1 : playIndex
-            this.localList.renderPlayList()
-            const Track = this.localList.getLocalList()[this.localList.playingIndex]
-            this.player.load(this.getAudioURL(Track.fileName))            
+        this.nextTrackButton.addEventListener('click', this.playNext.bind(this))
+
+        this.player.addEventListener("decode", this.updateFrequencies.bind(this));
+        this.player.addEventListener('finish', this.autoContinue.bind(this))
+    }
+
+    autoContinue() {
+        const playIndex = (this.localList.playingIndex + 1) % this.localList.getLocalList().length
+        this.localList.playingIndex = playIndex === -1 ? this.localList.getLocalList().length - 1 : playIndex
+        this.localList.renderPlayList()
+        const Track = this.localList.getLocalList()[this.localList.playingIndex]
+        this.player.load(this.getAudioURL(Track.fileName)).then(_ => {
+            this.player.play()
+        })
+
+    }
+
+    playPrev() {
+        const isPlaying = this.player.isPlaying()
+        const playIndex = (this.localList.playingIndex - 1) % this.localList.getLocalList().length
+        this.localList.playingIndex = playIndex === -1 ? this.localList.getLocalList().length - 1 : playIndex
+        this.localList.renderPlayList()
+        const Track = this.localList.getLocalList()[this.localList.playingIndex]
+        this.player.load(this.getAudioURL(Track.fileName)).then(_ => {
+            if (isPlaying) {
+                this.player.play()
+            } else {
+                this.player.pause()
+            }
+        })
+    }
+
+    playNext() {
+        const isPlaying = this.player.isPlaying()
+        const playIndex = (this.localList.playingIndex + 1) % this.localList.getLocalList().length
+        this.localList.playingIndex = playIndex === -1 ? this.localList.getLocalList().length - 1 : playIndex
+        this.localList.renderPlayList()
+        const Track = this.localList.getLocalList()[this.localList.playingIndex]
+        this.player.load(this.getAudioURL(Track.fileName)).then(_ => {
+            if (isPlaying) {
+                this.player.play()
+            } else {
+                this.player.pause()
+            }
         })
     }
 
@@ -123,7 +154,6 @@ export class PlayerClient {
 
     getPlayerInstance() {
         const Player = WaveSurfer.create(this.playerParams);
-        Player.addEventListener("decode", this.updateFrequencies.bind(this));
         return Player;
     }
 

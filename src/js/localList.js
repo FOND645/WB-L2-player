@@ -5,7 +5,11 @@ export class localPlaylist {
         this.playingIndex = 0
         this.Player = Player
         this.renderPlayList()
-        this.Player.player.load(this.getAudioURL(this.getLocalList()[0].fileName))
+        if (this.getLocalList().length !== 0) {
+            this.Player.player.load(this.getAudioURL(this.getLocalList()[0].fileName))
+        } else {
+            this.playingIndex = -1
+        }
     }
 
     renderPlayList() {
@@ -76,9 +80,9 @@ export class localPlaylist {
     }
 
     getLocalList() {
-        const playlist = localStorage.getItem("playlist");
-        if (playlist) {
-            return JSON.parse(playlist);
+        const playlist = JSON.parse(localStorage.getItem("playlist"));
+        if (playlist && playlist.length) {
+            return playlist;
         } else {
             return [];
         }
